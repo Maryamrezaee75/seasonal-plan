@@ -4,8 +4,179 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>پلن واحدهای زیرمجموعه آقای مدنی</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Tahoma, Arial, sans-serif;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(125, 211, 252, 0.22), transparent 28%),
+        radial-gradient(circle at 85% 80%, rgba(196, 181, 253, 0.24), transparent 30%),
+        linear-gradient(135deg, #f8fbff, #f7f5ff);
+      color: #1e293b;
+    }
+
+    .header {
+      text-align: center;
+      padding: 55px 20px 25px;
+    }
+
+    .header h1 {
+      font-size: 30px;
+      margin-bottom: 12px;
+      color: #172554;
+    }
+
+    .header p {
+      color: #64748b;
+      font-size: 15px;
+    }
+
+    .units {
+      width: min(1050px, 92%);
+      margin: 45px auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .unit-card {
+      background: rgba(255,255,255,0.88);
+      border: 1px solid rgba(255,255,255,0.9);
+      border-radius: 28px;
+      padding: 35px 20px 30px;
+      text-align: center;
+      box-shadow: 0 15px 40px rgba(15,23,42,0.08);
+      cursor: pointer;
+      transition: 0.3s ease;
+      backdrop-filter: blur(12px);
+    }
+
+    .unit-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 22px 50px rgba(15,23,42,0.14);
+    }
+
+    .icon {
+      width: 145px;
+      height: 145px;
+      margin: 0 auto 25px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 62px;
+      box-shadow: inset 0 0 0 8px rgba(255,255,255,0.55);
+    }
+
+    .analysis .icon {
+      background: linear-gradient(135deg, #dbeafe, #93c5fd);
+    }
+
+    .audit .icon {
+      background: linear-gradient(135deg, #ede9fe, #c4b5fd);
+    }
+
+    .supervision .icon {
+      background: linear-gradient(135deg, #dcfce7, #86efac);
+    }
+
+    .unit-card h2 {
+      font-size: 21px;
+      margin-bottom: 12px;
+      color: #1e293b;
+    }
+
+    .unit-card .manager {
+      font-size: 14px;
+      color: #64748b;
+      margin-bottom: 22px;
+    }
+
+    .open-btn {
+      display: inline-block;
+      padding: 10px 25px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .analysis .open-btn {
+      color: #1d4ed8;
+      background: #eff6ff;
+    }
+
+    .audit .open-btn {
+      color: #7c3aed;
+      background: #f5f3ff;
+    }
+
+    .supervision .open-btn {
+      color: #15803d;
+      background: #f0fdf4;
+    }
+
+    .footer {
+      text-align: center;
+      color: #94a3b8;
+      font-size: 12px;
+      padding: 30px;
+    }
+
+    @media (max-width: 800px) {
+      .units {
+        grid-template-columns: 1fr;
+        max-width: 430px;
+      }
+
+      .header h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-  <h1>پلن واحدهای زیرمجموعه آقای مدنی</h1>
+
+  <header class="header">
+    <h1>پلن واحدهای زیرمجموعه آقای مدنی</h1>
+    <p>سامانه مدیریت و پایش پیشرفت تسک‌های پلن</p>
+  </header>
+
+  <main class="units">
+
+    <div class="unit-card analysis">
+      <div class="icon">📊</div>
+      <h2>آنالیز و گزارشات</h2>
+      <div class="manager">سرپرست: پگاه خزائی</div>
+      <div class="open-btn">مشاهده پلن</div>
+    </div>
+
+    <div class="unit-card audit">
+      <div class="icon">📣</div>
+      <h2>ممیزی تبلیغات</h2>
+      <div class="manager">سرپرست: زهرا ریاحی</div>
+      <div class="open-btn">مشاهده پلن</div>
+    </div>
+
+    <div class="unit-card supervision">
+      <div class="icon">🔎</div>
+      <h2>نظارت</h2>
+      <div class="manager">سرپرست: هانیه شعله‌ور</div>
+      <div class="open-btn">مشاهده پلن</div>
+    </div>
+
+  </main>
+
+  <div class="footer">
+    سامانه پلن فصلی واحدهای زیرمجموعه
+  </div>
+
 </body>
 </html>
