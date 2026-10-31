@@ -5,7 +5,87 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>پلن واحدهای زیرمجموعه آقای مدنی</title>
 
-  <style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+  html { visibility: hidden; }
+</style>
+
+<script>
+const SUPABASE_URL = 'https://igosceewwbhukuqepegn.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_Ao8qLBsHoaceKPINDQgPBQ_cW1HSaBM';
+
+const authClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+(async function protectMainPage() {
+
+  const { data: sessionData } =
+    await authClient.auth.getSession();
+
+  const user = sessionData.session?.user;
+
+  /* کاربر وارد نشده */
+  if (!user) {
+    window.location.replace('login.html');
+    return;
+  }
+
+  const { data: profile, error } =
+    await authClient
+      .from('profiles')
+      .select(`
+        full_name,
+        role,
+        is_active,
+        units (
+          name
+        )
+      `)
+      .eq('id', user.id)
+      .single();
+
+  /* حساب نامعتبر یا غیرفعال */
+  if (error || !profile || !profile.is_active) {
+    await authClient.auth.signOut();
+    window.location.replace('login.html');
+    return;
+  }
+
+  /* فقط مریم و آقای مدنی صفحه سه واحد را می‌بینند */
+  if (
+    profile.role === 'admin' ||
+    profile.role === 'executive'
+  ) {
+    document.documentElement.style.visibility = 'visible';
+    return;
+  }
+
+  const unitName = profile.units?.name;
+
+  /* سایر کاربران مستقیم به واحد خودشان */
+  if (unitName === 'آنالیز و گزارشات') {
+    window.location.replace('analysis.html');
+    return;
+  }
+
+  if (unitName === 'ممیزی تبلیغات') {
+    window.location.replace('audit.html');
+    return;
+  }
+
+  if (unitName === 'نظارت') {
+    window.location.replace('supervision.html');
+    return;
+  }
+
+  await authClient.auth.signOut();
+  window.location.replace('login.html');
+
+})();
+</script><style>
     * {
       box-sizing: border-box;
       margin: 0;
