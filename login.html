@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>ورود | سامانه پلن فصلی</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Tahoma, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(125,211,252,.25), transparent 30%),
+        radial-gradient(circle at 85% 80%, rgba(196,181,253,.28), transparent 30%),
+        linear-gradient(135deg,#f8fbff,#f7f5ff);
+      color: #172554;
+    }
+
+    .login-box {
+      width: 92%;
+      max-width: 420px;
+      background: rgba(255,255,255,.96);
+      border-radius: 24px;
+      padding: 38px 32px;
+      box-shadow: 0 20px 60px rgba(30,41,59,.14);
+      border: 1px solid rgba(148,163,184,.25);
+    }
+
+    .logo {
+      width: 76px;
+      height: 76px;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg,#2563eb,#7c3aed);
+      color: white;
+      font-size: 30px;
+      font-weight: bold;
+      box-shadow: 0 10px 25px rgba(79,70,229,.25);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #64748b;
+      font-size: 13px;
+      margin-bottom: 30px;
+      line-height: 1.8;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: bold;
+      margin: 15px 2px 7px;
+      color: #334155;
+    }
+
+    input {
+      width: 100%;
+      height: 48px;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 0 14px;
+      font-size: 14px;
+      outline: none;
+      direction: ltr;
+      text-align: left;
+      transition: .2s;
+    }
+
+    input:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99,102,241,.12);
+    }
+
+    button {
+      width: 100%;
+      height: 50px;
+      margin-top: 24px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg,#2563eb,#7c3aed);
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(79,70,229,.20);
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: wait;
+      transform: none;
+    }
+
+    #message {
+      min-height: 22px;
+      margin-top: 18px;
+      text-align: center;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .error {
+      color: #dc2626;
+    }
+
+    .success {
+      color: #15803d;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 26px;
+      font-size: 11px;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="login-box">
+
+    <div class="logo">P</div>
+
+    <h1>سامانه پلن فصلی</h1>
+
+    <div class="subtitle">
+      واحدهای زیرمجموعه آقای مدنی
+      <br>
+      برای ورود، ایمیل و رمز عبور خود را وارد کنید.
+    </div>
+
+    <form id="loginForm">
+
+      <label for="email">ایمیل</label>
+      <input
+        id="email"
+        type="email"
+        autocomplete="username"
+        placeholder="example@teamtask.app"
+        required
+      >
+
+      <label for="password">رمز عبور</label>
+      <input
+        id="password"
+        type="password"
+        autocomplete="current-password"
+        placeholder="••••••••"
+        required
+      >
+
+      <button id="loginButton" type="submit">
+        ورود به سامانه
+      </button>
+
+    </form>
+
+    <div id="message"></div>
+
+    <div class="footer">
+      سامانه مدیریت و پایش پیشرفت تسک‌های پلن
+    </div>
+
+  </div>
+
+
+<script>
+
+const SUPABASE_URL =
+  'https://igosceewwbhukuqepegn.supabase.co';
+
+const SUPABASE_KEY =
+  'sb_publishable_Ao8qLBsHoaceKPINDQgPBQ_cW1HSaBM';
+
+const client = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+
+const form =
+  document.getElementById('loginForm');
+
+const button =
+  document.getElementById('loginButton');
+
+const message =
+  document.getElementById('message');
+
+
+function showMessage(text, type = 'error') {
+
+  message.textContent = text;
+
+  message.className = type;
+
+}
+
+
+async function redirectUser(userId) {
+
+  const { data: profile, error } =
+    await client
+      .from('profiles')
+      .select(`
+        full_name,
+        role,
+        is_active,
+        units (
+          name
+        )
+      `)
+      .eq('id', userId)
+      .single();
+
+
+  if (error || !profile) {
+
+    await client.auth.signOut();
+
+    showMessage(
+      'پروفایل کاربری شما در سامانه تعریف نشده است.'
+    );
+
+    return;
+
+  }
+
+
+  if (!profile.is_active) {
+
+    await client.auth.signOut();
+
+    showMessage(
+      'حساب کاربری شما غیرفعال است.'
+    );
+
+    return;
+
+  }
+
+
+  /*
+    ادمین و مدیر ارشد
+    صفحه اصلی هر سه واحد را می‌بینند.
+  */
+
+  if (
+    profile.role === 'admin' ||
+    profile.role === 'executive'
+  ) {
+
+    window.location.href = 'index.html';
+
+    return;
+
+  }
+
+
+  /*
+    مدیر واحد و اعضای تیم
+    فقط وارد صفحه واحد خودشان می‌شوند.
+  */
+
+  const unitName =
+    profile.units?.name;
+
+
+  if (unitName === 'آنالیز و گزارشات') {
+
+    window.location.href = 'analysis.html';
+
+    return;
+
+  }
+
+
+  if (unitName === 'ممیزی تبلیغات') {
+
+    window.location.href = 'audit.html';
+
+    return;
+
+  }
+
+
+  if (unitName === 'نظارت') {
+
+    window.location.href = 'supervision.html';
+
+    return;
+
+  }
+
+
+  await client.auth.signOut();
+
+  showMessage(
+    'برای این حساب، واحد سازمانی تعیین نشده است.'
+  );
+
+}
+
+
+form.addEventListener(
+  'submit',
+  async function(event) {
+
+    event.preventDefault();
+
+    button.disabled = true;
+    button.textContent = 'در حال ورود...';
+
+    message.textContent = '';
+
+
+    const email =
+      document
+        .getElementById('email')
+        .value
+        .trim();
+
+    const password =
+      document
+        .getElementById('password')
+        .value;
+
+
+    const { data, error } =
+      await client.auth.signInWithPassword({
+        email,
+        password
+      });
+
+
+    if (error) {
+
+      showMessage(
+        'ایمیل یا رمز عبور صحیح نیست.'
+      );
+
+      button.disabled = false;
+      button.textContent = 'ورود به سامانه';
+
+      return;
+
+    }
+
+
+    showMessage(
+      'ورود موفق بود؛ در حال انتقال...',
+      'success'
+    );
+
+
+    await redirectUser(
+      data.user.id
+    );
+
+  }
+);
+
+
+/*
+  اگر کاربر قبلاً وارد شده باشد،
+  دوباره صفحه ورود نشان داده نمی‌شود.
+*/
+
+(async function checkExistingSession() {
+
+  const { data } =
+    await client.auth.getSession();
+
+  if (data.session?.user) {
+
+    showMessage(
+      'در حال ورود...',
+      'success'
+    );
+
+    await redirectUser(
+      data.session.user.id
+    );
+
+  }
+
+})();
+
+</script>
+
+</body>
+</html>
